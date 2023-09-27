@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -8,6 +9,8 @@ import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
+@Api(tags = "员工相关接口")
 public class EmployeeController {
 
     @Autowired
@@ -33,11 +37,11 @@ public class EmployeeController {
 
     /**
      * 登录
-     *
      * @param employeeLoginDTO
      * @return
      */
     @PostMapping("/login")
+    //接收参数都是DTO这个形式，返回结果里面通过VO进行封装
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 
@@ -50,13 +54,13 @@ public class EmployeeController {
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
                 claims);
-
+        //JWT令牌生成好之后，通过构建器bulider对数据进行封装，响应给前端页面，封装成了VO
         EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
                 .id(employee.getId())
                 .userName(employee.getUsername())
                 .name(employee.getName())
-                .token(token)
-                .build();
+                .token(token)  //jwt令牌
+                .build();   //调用build()这个方法将其构建好
 
         return Result.success(employeeLoginVO);
     }
@@ -70,5 +74,21 @@ public class EmployeeController {
     public Result<String> logout() {
         return Result.success();
     }
+
+
+    /**
+     * 实现新增员工的功能
+     *
+     * @return
+     */
+    @PostMapping
+    @ApiOperation("新增员工") //接收的是传入的数据已经打包好的DTO
+    public Result save(@RequestBody EmployeeDTO employeeDTO){
+        log.info("新增员工：{}",employeeDTO);
+        System.out.println("当前线程的id:"+Thread.currentThread().getId());
+        employeeService.save(employeeDTO);
+        return Result.success();
+    }
+
 
 }

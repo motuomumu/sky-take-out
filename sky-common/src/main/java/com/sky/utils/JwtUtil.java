@@ -12,10 +12,9 @@ public class JwtUtil {
     /**
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
-     *
      * @param secretKey jwt秘钥
      * @param ttlMillis jwt过期时间(毫秒)
-     * @param claims    设置的信息
+     * @param claims    设置的信息，自定义
      * @return
      */
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
@@ -26,15 +25,16 @@ public class JwtUtil {
         long expMillis = System.currentTimeMillis() + ttlMillis;
         Date exp = new Date(expMillis);
 
-        // 设置jwt的body
+        // 设置jwt的body，使用builder方法构建令牌，然后通过一个链式签名的算法来设置JWT令牌在生成的时候所需要设置的一些参数
         JwtBuilder builder = Jwts.builder()
-                // 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
+                // 自定义的数据，如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
+                //claims是一个Map集合，里面包含用户名等
                 .setClaims(claims)
                 // 设置签名使用的签名算法和签名使用的秘钥
                 .signWith(signatureAlgorithm, secretKey.getBytes(StandardCharsets.UTF_8))
-                // 设置过期时间
+                // 设置令牌的过期时间
                 .setExpiration(exp);
-
+        //调用compact方法进行返回值，最后可以拿到一个字符串类型的返回值
         return builder.compact();
     }
 
