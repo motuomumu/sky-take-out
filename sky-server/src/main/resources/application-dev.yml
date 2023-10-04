@@ -6,3 +6,20 @@ sky:
     database: sky_take_out
     username: root
     password: 123
+  alioss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    bucket-name: sky-take-out-motu
+    access-key-id: LTAI5t9X9e8DkfvTHLuNyCnR
+    access-key-secret: St7PUOW1J1a85YMac2lZtsOfhjzkVl
+
+  redis:
+    host: localhost
+    port: 6379
+    password: 123
+    database: 2
+  wechat:
+    appid: wxd73259a7e0d876e4
+    secret: 9772cca6f6da3d1ca5484faca64e7c0f
+    notifyUrl: http://54b77ccd.r12.cpolar.top/notify/paySuccess
+    refundNotifyUrl: http://54b77ccd.r12.cpolar.top/notify/paySuccess
+
